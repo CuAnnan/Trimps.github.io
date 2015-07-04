@@ -185,7 +185,9 @@ function load(saveString, autoLoad) {
 			filterTabs(tabBool, true);
 		}
 	}
-	gameElements.getElementById("worldNumber").innerHTML = game.global.world;
+	game.global.lockTooltip = false;
+	swapNotation(true);
+	document.getElementById("worldNumber").innerHTML = game.global.world;
     mapsSwitch(true);
     checkTriggers(true);
     setGather(game.global.playerGathering);
@@ -803,6 +805,7 @@ function addSpecials(maps, countOnly, map) { //countOnly must include map. Only 
         if ((special.world == -3) && ((world % 2) != 1)) continue;
         if ((special.world == -5) && ((world % 5) !== 0)) continue;
         if ((special.world == -33) && ((world % 3) !== 0)) continue;
+		if ((maps) && (special.filter) && (game.mapConfig.locations[map.location].resourceType != item)) continue;
         if ((typeof special.startAt !== 'undefined') && (special.startAt > world)) continue;
         if (typeof special.canRunOnce === 'undefined' && (special.level == "last") && canLast && (special.last <= (world - 5))) {
 			if (countOnly){
@@ -876,12 +879,15 @@ function drawGrid(maps) { //maps t or f. This function overwrites the current gr
     if (maps) size = game.global.mapGridArray.length;
     for (var i = 0; i < 10; i++) {
         if (maps && counter >= size) return;
-        var row = grid.insertRow(0);
-        row.id = "row" + i;
+        var row = document.createElement("ul");
+        row.setAttribute("id", "row" + i);
+		row.className = "battleRow";
+		grid.appendChild(row);
         for (var x = 0; x < cols; x++) {
             if (maps && counter >= size) return;
-            var cell = row.insertCell(x);
-            cell.id = idText + counter;
+			var cell = document.createElement("li");
+			cell.setAttribute("id", idText + counter);
+			row.appendChild(cell);
             cell.className = "battleCell";
             cell.innerHTML = (maps) ? game.global.mapGridArray[counter].text : game.global.gridArray[counter].text;
             counter++;
@@ -1235,8 +1241,8 @@ function buyEquipment(what) {
 	if (canAfford){
 		canAffordBuilding(what, true, null, true);
 		toBuy.level += game.global.buyAmt;
-		if (typeof obj.attack !== 'undefined') game.global.attack += (obj.attack * game.global.buyAmt);
-		if (typeof obj.health !== 'undefined') game.global.health += (obj.health * game.global.buyAmt);
+		if (typeof toBuy.attack !== 'undefined') game.global.attack += (toBuy.attack * game.global.buyAmt);
+		if (typeof toBuy.health !== 'undefined') game.global.health += (toBuy.health * game.global.buyAmt);
 	}
 	tooltip(what, "equipment", "update");	
 }

@@ -37,9 +37,10 @@ function tooltip(what, isItIn, event) {
 		} else if (e.clientX || e.clientY) {
 			cordx = e.clientX + 25;
 			cordy = e.clientY;
+			
 		}
-		elem.style.left = cordx;
-		elem.style.top = (cordy - 200);
+		elem.style.left = cordx + "px";
+		elem.style.top = (cordy - 200) + "px";
 	}
 	var tooltipText;
 	var costText = "";
@@ -97,6 +98,13 @@ function tooltip(what, isItIn, event) {
 	if (what == "Queue"){
 		tooltipText = "This is a building in your queue, you'll need to click \"Build\" to build it. Clicking an item in the queue will cancel it for a full refund.";
 		costText = "";
+	}
+	if (what == "Custom"){
+		tooltipText = "Type a number below to purchase a specific amount.<br/><br/><input type='number' id='customNumberBox' style='width: 50%'></input>"
+		costText = "<div class='maxCenter'><div class='btn btn-info' onclick='numTab(5)'>Apply</div><div class='btn btn-info' onclick='unlockTooltip(); tooltip(\"hide\")'>Cancel</div></div>";
+		game.global.lockTooltip = true;
+		elem.style.left = "32.5%";
+		elem.style.top = "25%";
 	}
 	if (what == "Export"){
 		tooltipText = "This is your save string. There are many like it but this one is yours. Save this save somewhere safe so you can save time next time. <br/><br/><textarea style='width: 100%' rows='10'>" + save(true) + "</textarea>";
@@ -176,12 +184,15 @@ function unlockTooltip(){
 	game.global.lockTooltip = false;
 }
 
+function swapNotation(updateOnly){
+	if (!updateOnly) game.global.standardNotation = !game.global.standardNotation;
+	document.getElementById("notationBtn").innerHTML = (game.global.standardNotation) ? "Standard Notation" : "Scientific Notation";
+}
+
 function prettify(number) {
 	var numberTmp = number;
 	number = Math.round(number * 1000000) / 1000000;
 	
-	// this is the mathematical way of changing base
-	// and so it's a little more efficient than looping
 	if(number === 0)
 	{
 		return prettifySub(0);
@@ -196,17 +207,13 @@ function prettify(number) {
 		'Dd', 'Td', 'Qad', 'Qid', 'Sxd', 'Spd', 'Od', 'Nd', 'V'
 	];
 	var suffix;
-	if (base <= suffices.length && base > 0)
+	if ((base <= suffices.length && base > 0) && game.global.standardNotation)
 	{
 		suffix = suffices[base-1];
 	}
 	else
 	{
-		
-		// I strongly recommend using scientific notation instead of ++
-		// if the base is 22, 23, or 24 you'll end up with the same indicator
-		// being shown which will confuse late game players.
-		return parseFloat(numberTmp).toExponential(3);
+		return parseFloat(numberTmp).toExponential(2);
 	}
 
 	return prettifySub(number) + suffix;
@@ -381,12 +388,28 @@ function getTabClass(displayed){
 
 
 function numTab (what) {
+	var num = 0;
+	if (what == 5){
+		
+		unlockTooltip();
+		tooltip('hide');
+		num = document.getElementById("customNumberBox").value;
+		if (num > 0) {
+			document.getElementById("tab5Text").innerHTML = "+" + prettify(num);
+			game.global.buyAmt = parseInt(num);
+		}
+		else {
+			message("Please use a number greater than 0!", "Notices");
+			return;
+		}
+	}
 	if (what == null) what = game.global.numTab;
 	else
 	game.global.numTab = what;
-	for (var x = 1; x <= 4; x++){
-		gameElements.getElementById("tab" + x).style.background = (what == x) ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.25)";
-		var num;
+	for (var x = 1; x <= 5; x++){
+		var thisTab = document.getElementById("tab" + x);
+		thisTab.style.background = (what == x) ? "rgba(0,0,0,0.5)" : "rgba(255,255,255,0.25)";	
+		if (x == 5) return;
 		switch (x){
 			case 1:
 				num = 1;
@@ -399,7 +422,7 @@ function numTab (what) {
 				break;
 			case 4:
 				num = 100;
-				break;
+				break;	
 		}
 		if (x == what) game.global.buyAmt = num;
 	}

@@ -7,7 +7,7 @@
 
 #wrapper {
     padding: 15px;
-    height: 100%;
+    height: 100vh;
     background-size: auto 100%;
 }
 
@@ -263,12 +263,15 @@
 .titleSpan {}
 
 #buyContainer {
-	border: 2px solid white;
 	overflow-y: auto;
+	height: calc(99vh - 20vw - 215px);
+}
+
+#outerBuyContainer{
+	border: 2px solid white;
 	margin: 0 0 5px 0;
 	background: rgba(121,121,123,0.5);
 	color: white;
-	height: calc(99vh - 20vw - 145px);
 }
 
 #buyHere {
@@ -329,6 +332,9 @@
     font-size: 1.3vw;
 }
 
+#numTabs{
+	margin-top: 5px;
+}
 #numTabs > ul > li > a {
     padding: 3px;
 }
@@ -365,7 +371,7 @@
 }
 
 #rightCol {
-    height: 100%;
+	height: calc(99vh - 20vw - 27px);
 }
 
 .ownedArea {
@@ -392,11 +398,12 @@
 #buildings {
     text-align: center;
 }
-
+.battleRow{
+	list-style: none;
+}
 .battleCell {
     border: 1px solid black;
-	max-width: 100%;
-	max-height: 100%;
+	display: inline-block;
 }
 
 .collecting {}
@@ -412,7 +419,9 @@
     font-size: 1.1em;
 }
 
-#settings {}
+#settings {
+
+}
 
 #tooltipDiv {
     width: 25%;
