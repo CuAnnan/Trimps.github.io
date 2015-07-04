@@ -30,9 +30,9 @@ var domCache = {
 					for(var i in mutation.removedNodes)
 					{
 						var node = mutation.removedNodes[i];
-						if(node.id && gameElements.nodes[node.id])
+						if(node.id && domCache.nodes[node.id])
 						{
-							delete(gameElements.nodes[node.id]);
+							delete(domCache.nodes[node.id]);
 						}
 					}
 				}
@@ -44,22 +44,25 @@ var domCache = {
 	{
 		if(!id)
 		{
+			console.log('Request for element served but no id given');
+			console.log(new Error().stack);
 			return null;
 		}
 		if(this.nodes[id])
 		{
 			return this.nodes[id];
 		}
-		console.log('searching for element' +id);
+		var consoleMessages = [];
+		consoleMessages.push('searching for element ' +id);
 		var elem = document.getElementById(id);
 		
 		if(elem === null)
 		{
-			console.log('Element '+id+' not found');
+			consoleMessages.push('Element '+id+' not found');
+			console.log(consoleMessages);
 			return null;
 		}
 		
-		console.log('returning element');
 		this.observer.observe(elem.parentNode, this.observerOptions);
 		
 		this.nodes[id] = elem;
