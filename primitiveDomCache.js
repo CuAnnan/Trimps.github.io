@@ -1,5 +1,5 @@
-/* 		Trimps
-		Copyright (C) 2015 Zach Hood
+/* 		
+		A dom cache to speed up document.getElementBYId
 
 		This program is free software: you can redistribute it and/or modify
 		it under the terms of the GNU General Public License as published by
@@ -19,7 +19,7 @@
 // primitive element caching
 // While I recommend using jQuery for this kind of thing, this should improve performance a little.
 
-var gameElements = {
+var domCache = {
 	nodes : {},
 	observer:new MutationObserver(
 		function(mutations)
@@ -64,9 +64,5 @@ var gameElements = {
 		
 		this.nodes[id] = elem;
 		return elem;
-	},
-	removeElement:function(id)
-	{
-		
 	}
 };
